@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang=ja>
+<head>
+<meta charset=utf-8>
+<script type="text/javascript" src="vue.js"></script>
+<script type="text/javascript" src="main.js"></script>
+<style>
+#app,#app2{
+width: 60%;
+margin: auto;
+}
+</style>
+</head>
+<body>
+<div id="app">
+<dl>
+<dt>ホスト検索:</dt><dd><input type=text v-on:keyup="keyup" v-bind:value="inputvalue"></input></dd>
+</dl>
+<ul>
+<li v-for="i in CandidateLists">
+<span v-on:click="candidate_click" v-bind:value="i">{{ i }}</span>
+</li>
+</ul>
+有線:<span v-on:click="set_mac" v-bind:value="CandidateHost.lan" id="lan">{{ CandidateHost.lan }}</span><br>
+無線:<span v-on:click="set_mac" v-bind:value="CandidateHost.wlan" id="wlan">{{ CandidateHost.wlan }}</span><br>
+</div>
+<div id="app2">
+<dl>
+<dt>ホスト名:</dt><dd><input type=text id="host" v-on:change="host_change" v-bind:value="host"></input></dd>
+<dt>mac:</dt><dd><input type=text id="mac" v-on:change="mac_change" v-bind:value="mac"></input></dd>
+</dl>
+<input type=radio v-model="type" v-bind:value="lan">有線</input>
+<input type=radio v-model="type" v-bind:value="wlan">無線</input>
+<button v-on:click="add_host">追加</button>
+</div>
+</body>
+</html>
