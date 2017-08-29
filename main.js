@@ -70,6 +70,9 @@ class HostSelector {
   }
   set host(x){
     console.log("host change",x);
+    x = x.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
+        return String.fromCharCode(s.charCodeAt(0) - 65248);
+    }).toLowerCase();
     this._host = x;
     this.hostChanged.fire();
   }
@@ -81,7 +84,19 @@ class HostSelector {
   }
   set mac(x){
     console.log("host mac",x);
-    this._mac = x;
+    x = x.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
+        return String.fromCharCode(s.charCodeAt(0) - 65248);
+    }).toLowerCase();
+    var y="";
+    for(var i of x){
+	    console.log(i)
+	    if(i.match("[a-f0-9]")){
+		    y+=i
+	    }
+    }
+    y = y.replace(/(..)(?=.)/g,"$1:");
+
+    this._mac = y;
     this.macChanged.fire();
   }
   get host(){
@@ -205,8 +220,10 @@ function add_host(event){
 }
 
 function host_change(event){
+	this.model.host=event.target.value
 }
 function mac_change(event){
+	this.model.mac=event.target.value
 }
 window.addEventListener("load",function(){
   var model = new FatModel();

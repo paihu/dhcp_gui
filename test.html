@@ -4,14 +4,56 @@
 <meta charset=utf-8>
 <script type="text/javascript" src="vue.js"></script>
 <script type="text/javascript" src="main.js"></script>
-<style>
-#app,#app2{
+<style type="text/css">
+#main-delete:checked ~ #delete-ip-address {
+display: block;
+}
+
+#main-list:checked ~ #list-ip-address {
+display: block;
+}
+
+#main-add:checked ~ #add-ip-address {
+display: block;
+}
+
+section{
+display: none;
+}
+
+body{
 width: 60%;
-margin: auto;
+margin: 4em auto;
+}
+#main-add,#main-delete,#main-list{
+display: none;
+}
+label{
+ border: solid 2px;
+}
+
+li span {
+	cursor: pointer;
 }
 </style>
 </head>
 <body>
+
+<input type="radio" name="main-menu" id="main-add" checked>
+<input type="radio" name="main-menu" id="main-delete">
+<input type="radio" name="main-menu" id="main-list">
+<label for="main-add">登録</label>
+<label for="main-delete">削除</label>
+<label for="main-list">表示</label>
+
+<section id="list-ip-address">
+固定IPアドレス登録情報を閲覧します。
+</section>
+<section id="delete-ip-address">
+固定IPアドレス情報を削除します。
+</section>
+<section id="add-ip-address">
+固定IPアドレス情報を登録します。
 <div id="app">
 <dl>
 <dt>ホスト検索:</dt><dd><input type=text v-on:keyup="keyup" v-bind:value="inputvalue"></input></dd>
@@ -21,8 +63,10 @@ margin: auto;
 <span v-on:click="candidate_click" v-bind:value="i">{{ i }}</span>
 </li>
 </ul>
-有線:<span v-on:click="set_mac" v-bind:value="CandidateHost.lan" id="lan">{{ CandidateHost.lan }}</span><br>
-無線:<span v-on:click="set_mac" v-bind:value="CandidateHost.wlan" id="wlan">{{ CandidateHost.wlan }}</span><br>
+<ul>
+<li>有線:<span v-on:click="set_mac" v-bind:value="CandidateHost.lan" id="lan">{{ CandidateHost.lan }}</span></li>
+<li>無線:<span v-on:click="set_mac" v-bind:value="CandidateHost.wlan" id="wlan">{{ CandidateHost.wlan }}</span></li>
+</ul>
 </div>
 <div id="app2">
 <dl>
@@ -33,5 +77,6 @@ margin: auto;
 <input type=radio v-model="type" v-bind:value="wlan">無線</input>
 <button v-on:click="add_host">追加</button>
 </div>
+</section>
 </body>
 </html>
