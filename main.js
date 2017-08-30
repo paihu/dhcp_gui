@@ -23,8 +23,8 @@ class FatModel {
     this.dataSelector.SearchList(x);
   }
   SearchHost(x){
-    this.dataSelector.SearchHost(x);
-    this.hostSelector.host = this.dataSelector.CandidateHost.host;
+      this.dataSelector.SearchHost(x);
+      this.hostSelector.host = this.dataSelector.CandidateHost.host;
   }
 
 
@@ -161,11 +161,9 @@ class DataSelector {
   SearchHost(x){
     fetch(EndPoint+"Assets/Host/"+x).then(r => r.json()).then(j => {
       console.log(j.Host);
-      for(var i of j.Host){
-        if (i.host == x){
-          this.CandidateHost = i;
-          return
-        }
+      if (j.Host.host == x){
+        this.CandidateHost = j.Host;
+        return
       }
     });
   }
@@ -193,8 +191,10 @@ var value = event.target.value;
 value = value.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
     return String.fromCharCode(s.charCodeAt(0) - 65248);
 }).toLowerCase();
+if(value.length>0){
 this.model.SearchList(value);
-console.log("keyup: ",value);
+}
+console.log("keyup: ",value,value.length);
 }
 
 
