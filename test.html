@@ -38,7 +38,7 @@ li span {
 </style>
 </head>
 <body>
-
+<input type="checkbox" name="use-servder" id="use-server" >
 <input type="radio" name="main-menu" id="main-add" checked>
 <input type="radio" name="main-menu" id="main-delete">
 <input type="radio" name="main-menu" id="main-list">
@@ -76,6 +76,7 @@ li span {
 <input type=radio v-model="type" v-bind:value="lan">有線</input>
 <input type=radio v-model="type" v-bind:value="wlan">無線</input>
 <button v-on:click="add_host">追加</button>
+<div>{{ message }}</div>
 </div>
 </section>
 </body>

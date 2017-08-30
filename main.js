@@ -1,5 +1,6 @@
 'use strict';
 
+var EndPoint="/"
 class FatModel {
   constructor(){
     this.dataSelector = new DataSelector();
@@ -141,11 +142,12 @@ class DataSelector {
   // host が x で始まるものの host名リストをCandidateListsに設定する
   // 実際はAPI叩く予定
   SearchList(x){
-    fetch("asset.json").then(r => r.json()).then(j => {
+    fetch(EndPoint+"Assets/Hosts/search/"+x).then(r => r.json()).then(j => {
+      console.log(j)
       var list = [];
       for(var i of j.Hosts){
-        if (i.host.match(x)){
-          list.push(i.host);
+        if (i.match(x)){
+          list.push(i);
         }
       }
       this.CandidateLists = list;
@@ -157,8 +159,9 @@ class DataSelector {
   // host が x であるオブジェクトを CandidateHostに設定する
   // 実際はAPI叩く予定
   SearchHost(x){
-    fetch("asset.json").then(r => r.json()).then(j => {
-      for(var i of j.Hosts){
+    fetch(EndPoint+"Assets/Host/"+x).then(r => r.json()).then(j => {
+      console.log(j.Host);
+      for(var i of j.Host){
         if (i.host == x){
           this.CandidateHost = i;
           return
@@ -217,6 +220,9 @@ this.model.type = event.target.attributes.id.value;
 }
 
 function add_host(event){
+    var json = {'host': this.model.host,'type':this.model.type,'mac':this.model.mac}
+    console.log("add_host",JSON.stringify(json))
+    fetch(EndPoint+'DHCP/Host/'+this.model.host,{method: 'POST',body: JSON.stringify(json),headers: new Headers({'Content-Type': 'application/json','Accept':'application/json'})}).then(resp =>{return resp.json()}).then(json => {this.message=json})
 }
 
 function host_change(event){
@@ -256,6 +262,7 @@ window.addEventListener("load",function(){
       type: "",
       lan: "lan",
       wlan: "wlan",
+      message: "",
     },
     methods:{
       host_change: host_change,
