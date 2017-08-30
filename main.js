@@ -143,7 +143,7 @@ class DataSelector {
   SearchList(x){
     fetch("asset.json").then(r => r.json()).then(j => {
       var list = [];
-      for(var i of j){
+      for(var i of j.Hosts){
         if (i.host.match(x)){
           list.push(i.host);
         }
@@ -158,7 +158,7 @@ class DataSelector {
   // 実際はAPI叩く予定
   SearchHost(x){
     fetch("asset.json").then(r => r.json()).then(j => {
-      for(var i of j){
+      for(var i of j.Hosts){
         if (i.host == x){
           this.CandidateHost = i;
           return
