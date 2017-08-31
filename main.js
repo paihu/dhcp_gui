@@ -183,6 +183,11 @@ class DhcpSelector{
         return this._CandidateLists;
     }
 
+    DeleteHost(name){
+        fetch(EndPoint + "DHCP/Host/"+ name, { method: 'DELETE'}).then(r=>r.json()).then(j=>{
+            console.log(j);
+        });
+    }
     AllHosts(){
         fetch(EndPoint + "DHCP/Hosts/").then(r=>r.json()).then(j=>{
             console.log(j);
@@ -211,6 +216,25 @@ class Notifier {
     }
 }
 
+function delete_candidate(event){
+    console.log("delete: ",event.target.value);
+    this.model.DeleteHost(event.target.value);
+}
+
+function keyup_host(event) {
+    this.inputhostvalue = event.target.value;
+    var value = event.target.value;
+    value = value.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
+        return String.fromCharCode(s.charCodeAt(0) - 65248);
+    }).toLowerCase();
+    if (value.length > 0) {
+        this.model.SearchHosts(value);
+    }
+    console.log("keyup: ", value, value.length);
+
+}
+function keyup_mac(event) {
+}
 // インクリメンタルサーチ
 // 対象文字を正規化してモデルに投げる
 function keyup(event) {
@@ -283,6 +307,30 @@ function mac_change(event) {
     this.model.mac = event.target.value
 }
 window.addEventListener("load", function() {
+    var del_view = new Vue({
+        el: '#app_delete',
+        created: function(){
+            console.log("app_show created");
+            this.model = new DhcpSelector();
+        },
+        mounted: function(){
+            console.log("app_show mounted");
+            this.model.CandidateListsChanged.observe(e=>{
+                this.CandidateLists = this.model.CandidateLists;
+            });
+        },
+        data: {
+            CandidateLists: [],
+            CandidateHost: {},
+            inputhostvalue: [],
+            inputmacvalue: [],
+        },
+        methods: {
+            keyup_host: keyup_host,
+            keyup_mac: keyup_mac,
+            candidate_click: delete_candidate
+        }
+    });
     var show = new Vue({
         el: '#app_show',
         created: function(){

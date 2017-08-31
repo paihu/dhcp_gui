@@ -60,15 +60,18 @@ li span {
 固定IPアドレス情報を削除します。
 <div id="app_delete">
 <dl>
-<dt>ホスト検索:</dt><dd><input type=text v-on:keyup="keyup" v-bind:value="inputhostvalue"></input></dd>
+<dt>ホスト検索:</dt><dd><input type=text v-on:keyup="keyup_host" v-bind:value="inputhostvalue"></input></dd>
 </dl>
 <dl>
-<dt>Mac検索:</dt><dd><input type=text v-on:keyup="keyup" v-bind:value="inputmacvalue"></input></dd>
+<dt>Mac検索:</dt><dd><input type=text v-on:keyup="keyup_mac" v-bind:value="inputmacvalue"></input></dd>
 </dl>
 <ul>
 <li v-for="i in CandidateLists">
-<span v-on:click="candidate_click" v-bind:value="i">{{ i }}</span>
+{{ i }}<button v-on:click="candidate_click" v-bind:value="i.host">削除</button>
 </ul>
+<span v-if="CandidateHost">
+{{ CandidateHost.host }},{{ CandidateHost.ip }},{{ CandidateHost.mac }},{{ CandidateHost.type }}
+</span>
 </div>
 </section>
 <section id="add-ip-address">
