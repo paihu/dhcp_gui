@@ -3,10 +3,10 @@
 var EndPoint = "/"
 class FatModel {
     constructor() {
-        this.dataSelector = new DataSelector();
+        this.dataSelector = new AssetSelector();
         this.hostSelector = new HostSelector();
     }
-    // from DataSelector
+    // from AssetSelector
     get CandidateListsChanged() {
         return this.dataSelector.CandidateListsChanged;
     }
@@ -109,7 +109,7 @@ class HostSelector {
     }
 }
 
-class DataSelector {
+class AssetSelector {
     constructor() {
         this.CandidateListsChanged = new Notifier;
         this.CandidateHostChanged = new Notifier;
@@ -169,6 +169,36 @@ class DataSelector {
 
 }
 
+class DhcpSelector{
+    constructor() {
+        this.CandidateListsChanged = new Notifier;
+        this.CandidateLists = [];
+    }
+    set CandidateLists(x) {
+        this._CandidateLists = x;
+        console.log("CandidateListsFire");
+        this.CandidateListsChanged.fire();
+    }
+    get CandidateLists() {
+        return this._CandidateLists;
+    }
+
+    AllHosts(){
+        fetch(EndPoint + "DHCP/Hosts/").then(r=>r.json()).then(j=>{
+            console.log(j);
+            this.CandidateLists = j.Hosts;
+        }
+        );
+    }
+    SearchHosts(x){
+        fetch(EndPoint + "DHCP/Hosts/search/" + x).then(r=>r.json()).then(j=>{
+            console.log(j)
+            this.CandidateLists = j.Hosts;
+        }
+        );
+    }
+
+}
 class Notifier {
     constructor() {
         this.handlers = [];
@@ -217,6 +247,9 @@ function set_mac(event) {
     this.model.type = event.target.attributes.id.value;
 }
 
+function AllHosts(event){
+    this.model.AllHosts();
+}
 // Host情報をAPI経由で追加する
 function add_host(event) {
     var json = {
@@ -242,12 +275,35 @@ function add_host(event) {
 }
 
 function host_change(event) {
+    console.log("host change",event.target.value)
     this.model.host = event.target.value
 }
 function mac_change(event) {
+    console.log("mac change",event.target.value)
     this.model.mac = event.target.value
 }
 window.addEventListener("load", function() {
+    var show = new Vue({
+        el: '#app_show',
+        created: function(){
+            console.log("app_show created");
+            this.model = new DhcpSelector();
+        },
+        mounted: function(){
+            console.log("app_show mounted");
+            this.model.CandidateListsChanged.observe(e=>{
+                this.CandidateLists = this.model.CandidateLists;
+            });
+            this.model.AllHosts();
+        },
+        data: {
+            CandidateLists: [],
+        },
+        methods: {
+            show: AllHosts
+        }
+
+    });
     var model = new FatModel();
     var host = new Vue({
         el: '#app2',

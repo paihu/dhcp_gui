@@ -48,9 +48,28 @@ li span {
 
 <section id="list-ip-address">
 固定IPアドレス登録情報を閲覧します。
+<div id="app_show">
+<button v-on:click="show">test</button>
+<ul>
+<li v-for="i in CandidateLists">
+<span v-bind:value="i">{{ i.host }},{{ i.ip }},{{ i.mac }},{{ i.type }}</span>
+</ul>
+</div>
 </section>
 <section id="delete-ip-address">
 固定IPアドレス情報を削除します。
+<div id="app_delete">
+<dl>
+<dt>ホスト検索:</dt><dd><input type=text v-on:keyup="keyup" v-bind:value="inputhostvalue"></input></dd>
+</dl>
+<dl>
+<dt>Mac検索:</dt><dd><input type=text v-on:keyup="keyup" v-bind:value="inputmacvalue"></input></dd>
+</dl>
+<ul>
+<li v-for="i in CandidateLists">
+<span v-on:click="candidate_click" v-bind:value="i">{{ i }}</span>
+</ul>
+</div>
 </section>
 <section id="add-ip-address">
 固定IPアドレス情報を登録します。
