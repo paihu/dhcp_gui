@@ -202,6 +202,13 @@ class DhcpSelector{
         }
         );
     }
+    SearchHostsfromMac(x){
+        fetch(EndPoint + "DHCP/Hosts/Macsearch/" + x).then(r=>r.json()).then(j=>{
+            console.log(j)
+            this.CandidateLists = j.Hosts;
+        }
+        );
+    }
 
 }
 class Notifier {
@@ -222,6 +229,7 @@ function delete_candidate(event){
 }
 
 function keyup_host(event) {
+    console.log(this.inputhostvalue);
     this.inputhostvalue = event.target.value;
     var value = event.target.value;
     value = value.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
@@ -234,6 +242,15 @@ function keyup_host(event) {
 
 }
 function keyup_mac(event) {
+    this.inputmacvalue = event.target.value;
+    var value = event.target.value;
+    value = value.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
+        return String.fromCharCode(s.charCodeAt(0) - 65248);
+    }).toLowerCase();
+    if (value.length > 0) {
+        this.model.SearchHostsfromMac(value);
+    }
+    console.log("keyup: ", value, value.length);
 }
 // インクリメンタルサーチ
 // 対象文字を正規化してモデルに投げる

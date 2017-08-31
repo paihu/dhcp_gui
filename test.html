@@ -63,15 +63,12 @@ li span {
 <dt>ホスト検索:</dt><dd><input type=text v-on:keyup="keyup_host" v-bind:value="inputhostvalue"></input></dd>
 </dl>
 <dl>
-<dt>Mac検索:</dt><dd><input type=text v-on:keyup="keyup_mac" v-bind:value="inputmacvalue"></input></dd>
+<dt>Mac検索: まだ動きません</dt><dd><input type=text v-on:keyup="keyup_mac" v-bind:value="inputmacvalue"></input></dd>
 </dl>
 <ul>
 <li v-for="i in CandidateLists">
 {{ i }}<button v-on:click="candidate_click" v-bind:value="i.host">削除</button>
 </ul>
-<span v-if="CandidateHost">
-{{ CandidateHost.host }},{{ CandidateHost.ip }},{{ CandidateHost.mac }},{{ CandidateHost.type }}
-</span>
 </div>
 </section>
 <section id="add-ip-address">
