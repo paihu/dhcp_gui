@@ -92,8 +92,9 @@ li span {
 <dt>ホスト名:</dt><dd><input type=text id="host" v-on:change="host_change" v-bind:value="host"></input></dd>
 <dt>mac:</dt><dd><input type=text id="mac" v-on:change="mac_change" v-bind:value="mac"></input></dd>
 </dl>
-<input type=radio v-model="type" v-bind:value="lan">有線</input>
-<input type=radio v-model="type" v-bind:value="wlan">無線</input>
+<div  v-for="(d,i) in ranges">
+<input type=radio v-model="type" v-bind:value="d.typeid" >{{ d.name }}</input>
+</div>
 <button v-on:click="add_host">追加</button>
 <div>{{ message }}</div>
 </div>

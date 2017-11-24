@@ -5,8 +5,10 @@ class FatModel {
     constructor() {
         this.dataSelector = new AssetSelector();
         this.hostSelector = new HostSelector();
+        this.dhcpSelector = new DhcpSelector();
     }
     // from AssetSelector
+    
     get CandidateListsChanged() {
         return this.dataSelector.CandidateListsChanged;
     }
@@ -55,6 +57,17 @@ class FatModel {
     get mac() {
         return this.hostSelector.mac;
     }
+
+
+    get rangesChanged(){
+        return this.dhcpSelector.RangesChanged;
+    }
+    get Ranges(){
+        return this.dhcpSelector.Ranges;
+    }
+    AllRanges(){
+        this.dhcpSelector.AllRanges();
+    }
 }
 
 class HostSelector {
@@ -63,7 +76,7 @@ class HostSelector {
         this.typeChanged = new Notifier;
         this.macChanged = new Notifier;
         this.host = "";
-        this.type = "lan";
+        this.type = "1";
         this.mac = "";
     }
     _str_normalize(str) {
@@ -173,6 +186,8 @@ class DhcpSelector{
     constructor() {
         this.CandidateListsChanged = new Notifier;
         this.CandidateLists = [];
+        this.RangesChanged = new Notifier;
+        this.Ranges = [];
     }
     set CandidateLists(x) {
         this._CandidateLists = x;
@@ -181,6 +196,16 @@ class DhcpSelector{
     }
     get CandidateLists() {
         return this._CandidateLists;
+    }
+
+    set Ranges(x){
+        this._Ranges = x;
+        console.log(this.Ranges);
+        console.log("RangesFire");
+        this.RangesChanged.fire()
+    }
+    get Ranges() {
+        return this._Ranges;
     }
 
     DeleteHost(name){
@@ -192,6 +217,7 @@ class DhcpSelector{
         fetch(EndPoint + "DHCP/Hosts/").then(r=>r.json()).then(j=>{
             console.log(j);
             this.CandidateLists = j.Hosts;
+            console.log(j.Hosts);
         }
         );
     }
@@ -206,6 +232,13 @@ class DhcpSelector{
         fetch(EndPoint + "DHCP/Hosts/Macsearch/" + x).then(r=>r.json()).then(j=>{
             console.log(j)
             this.CandidateLists = j.Hosts;
+        }
+        );
+    }
+    AllRanges(){
+        fetch(EndPoint + "DHCP/RANGE/").then(r=>r.json()).then(j=>{
+            console.log(j);
+            this.Ranges = j.Ranges;
         }
         );
     }
@@ -295,9 +328,14 @@ function AllHosts(event){
 function add_host(event) {
     var json = {
         'host': this.model.host,
-        'type': this.model.type,
+        'typeid': this.type,
         'mac': this.model.mac
     }
+    if(json['mac'].length!=17){
+        this.message = "MAC Addressの長さがおかしいです";
+        return
+    }
+    console.log("type: ", this.type);
     console.log("add_host", JSON.stringify(json))
     fetch(EndPoint + 'DHCP/Host/' + this.model.host, {
         method: 'POST',
@@ -363,6 +401,7 @@ window.addEventListener("load", function() {
         },
         data: {
             CandidateLists: [],
+            ranges: [],
         },
         methods: {
             show: AllHosts
@@ -374,7 +413,8 @@ window.addEventListener("load", function() {
         el: '#app2',
         created: function() {
             this.model = model;
-            console.log("created", this);
+            this.model.AllRanges();
+            console.log("app2 created", this);
         },
         mounted: function() {
             this.model.hostChanged.observe(e=>{
@@ -388,11 +428,12 @@ window.addEventListener("load", function() {
             );
             this.model.typeChanged.observe(e=>{
                 console.log("type change observe", this.model.type);
-                if (this.model.type == this.lan) {
-                    this.type = this.lan
-                } else if (this.model.type == this.wlan) {
-                    this.type = this.wlan;
-                }
+                this.type = this.model.type;
+            }
+            );
+            this.model.rangesChanged.observe(e=>{
+                this.ranges = this.model.Ranges;
+                console.log(this.model.Ranges)
             }
             );
         },
@@ -400,9 +441,8 @@ window.addEventListener("load", function() {
             host: "",
             mac: "",
             type: "",
-            lan: "lan",
-            wlan: "wlan",
             message: "",
+            ranges: [],
         },
         methods: {
             host_change: host_change,
@@ -435,11 +475,12 @@ window.addEventListener("load", function() {
             inputvalue: "",
             CandidateLists: [],
             CandidateHost: {},
+            ranges: [],
         },
         methods: {
             candidate_click: candidate_click,
             keyup: keyup,
-            click: click,
+            //click: click,
             set_mac: set_mac,
         },
         computed: {}
