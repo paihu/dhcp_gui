@@ -1,0 +1,31 @@
+<! DOCTYPE html>
+<html lang=ja>
+<head>
+<meta charset='utf-8'>
+<script type="text/javascript" src="vue.js"></script>
+<script type="text/javascript" src="range.js"></script>
+<title>固定IPアドレスレンジ設定</title>
+</head>
+<body>
+<input type="radio" name="range-menu" id="range-add" checked />
+<input type="radio" name="range-menu" id="range-delete" checked />
+<input type="radio" name="range-menu" id="range-show" checked />
+<section id="add-range">
+<div id="add_view">
+Name: <input type="text" v-model="name " /><br />
+Start: <input type="text" v-bind:input="startValidator(start)" v-model="start " />
+End: <input type="text" v-bind:input="endValidator(end)" v-model="end " />
+<button v-on:click="add_range" >add</button>
+</div>
+</section>
+<section id="delete-range">
+<div id="delete_view">
+</div>
+</section>
+<section id="show-range">
+<div id="show_view">
+</div>
+</section>
+</body>
+</html>
+
