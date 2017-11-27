@@ -9,22 +9,22 @@ class FatModel {
     }
     // from AssetSelector
     
-    get CandidateListsChanged() {
+    get AssetCandidateListsChanged() {
         return this.dataSelector.CandidateListsChanged;
     }
-    get CandidateHostChanged() {
+    get AssetCandidateHostChanged() {
         return this.dataSelector.CandidateHostChanged;
     }
-    get CandidateLists() {
+    get AssetCandidateLists() {
         return this.dataSelector.CandidateLists;
     }
-    get CandidateHost() {
+    get AssetCandidateHost() {
         return this.dataSelector.CandidateHost;
     }
-    SearchList(x) {
+    AssetSearchList(x) {
         this.dataSelector.SearchList(x);
     }
-    SearchHost(x) {
+    AssetSearchHost(x) {
         this.dataSelector.SearchHost(x);
         this.hostSelector.host = this.dataSelector.CandidateHost.host;
     }
@@ -58,7 +58,13 @@ class FatModel {
         return this.hostSelector.mac;
     }
 
-
+    // dhcpSelector 
+    get CandidateListsChanged() {
+        return this.dhcpSelector.CandidateListsChanged;
+    }
+    get CandidateLists() {
+        return this.dhcpSelector.CandidateLists;
+    }
     get rangesChanged(){
         return this.dhcpSelector.RangesChanged;
     }
@@ -67,6 +73,9 @@ class FatModel {
     }
     AllRanges(){
         this.dhcpSelector.AllRanges();
+    }
+    AllHosts(){
+        this.dhcpSelector.AllHosts();
     }
 }
 
@@ -259,6 +268,7 @@ class Notifier {
 function delete_candidate(event){
     console.log("delete: ",event.target.value);
     this.model.DeleteHost(event.target.value);
+    this.model.SearchHosts(this.inputhostvalue);
 }
 
 function keyup_host(event) {
@@ -458,10 +468,10 @@ window.addEventListener("load", function() {
             console.log("created", this);
         },
         mounted: function() {
-            this.model.CandidateListsChanged.observe(()=>{
-                this.CandidateLists = this.model.CandidateLists;
-                if (this.CandidateLists.length == 1) {
-                    this.model.SearchHost(this.CandidateLists[0]);
+            this.model.AssetCandidateListsChanged.observe(()=>{
+                this.AssetCandidateLists = this.model.AssetCandidateLists;
+                if (this.AssetCandidateLists.length == 1) {
+                    this.model.SearchHost(this.AssetCandidateLists[0]);
                 }
             }
             );

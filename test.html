@@ -4,75 +4,60 @@
 <meta charset=utf-8>
 <script type="text/javascript" src="vue.js"></script>
 <script type="text/javascript" src="main.js"></script>
+<script type="text/javascript" src="bootstrap-native-v4.min.js"></script>
+<link rel="stylesheet" href="bootstrap.css">
+<link rel="stylesheet" href="custom.css">
 <style type="text/css">
-#main-delete:checked ~ #delete-ip-address {
-display: block;
-}
-
-#main-list:checked ~ #list-ip-address {
-display: block;
-}
-
-#main-add:checked ~ #add-ip-address {
-display: block;
-}
-
 section{
-display: none;
-}
-
-body{
-width: 60%;
-margin: 4em auto;
-}
-#main-add,#main-delete,#main-list{
-display: none;
-}
-label{
- border: solid 2px;
-}
-
-li span {
-	cursor: pointer;
+width: 90%;
+margin: 2em auto;
 }
 </style>
 </head>
 <body>
-<input type="checkbox" name="use-servder" id="use-server" >
-<input type="radio" name="main-menu" id="main-add" checked>
-<input type="radio" name="main-menu" id="main-delete">
-<input type="radio" name="main-menu" id="main-list">
-<label for="main-add">登録</label>
-<label for="main-delete">削除</label>
-<label for="main-list">表示</label>
-
-<section id="list-ip-address">
+<header class="navbar navbar-expand navbar-dark flex-column flex-md-row">
+<div class="navbar-nav-scroll">
+<ul class="navbar-nav flex-row nav" role="tablist" id="mainTab">
+<li class="nav-item" ><a role="tab" data-toggle="tab" id="add-ip-address-tab" class="nav-link active" href="#add-ip-address">登録</a></li>
+<li class="nav-item" ><a role="tab" data-toggle="tab" id="delete-ip-address-tab" class="nav-link" href="#delete-ip-address">削除</a></li>
+<li class="nav-item" ><a role="tab" data-toggle="tab" id="list-ip-address-tab" class="nav-link" href="#list-ip-address">表示</a></li>
+</ul>
+</header>
+<div class="tab-content" id="mainTabContent">
+<section role="tabpanel" id="list-ip-address" class="tab-pane">
 固定IPアドレス登録情報を閲覧します。
 <div id="app_show">
-<button v-on:click="show">test</button>
+<button v-on:click="show" class="btn btn-success">更新</button>
 <ul>
-<li v-for="i in CandidateLists">
-<span v-bind:value="i">{{ i.host }},{{ i.ip }},{{ i.mac }},{{ i.type }}</span>
-</ul>
+<table class="table table-hover">
+<tr v-for="i in CandidateLists">
+<td>{{ i.host }}</td><td>{{ i.ip }}</td><td>{{ i.mac }}</td><td>{{ i.typename }}</td>
+</tr>
+</table>
 </div>
 </section>
-<section id="delete-ip-address">
+<section role="tabpanel" id="delete-ip-address" class="tab-pane">
 固定IPアドレス情報を削除します。
 <div id="app_delete">
-<dl>
-<dt>ホスト検索:</dt><dd><input type=text v-on:keyup="keyup_host" v-bind:value="inputhostvalue"></input></dd>
-</dl>
+<div class="form-group w-25">
+<label for="del_search">ホスト検索</label>
+<input class="form-control" type=text id="del_search" v-on:keyup="keyup_host" v-bind:value="inputhostvalue"></input>
+</div>
+<!--
 <dl>
 <dt>Mac検索: まだ動きません</dt><dd><input type=text v-on:keyup="keyup_mac" v-bind:value="inputmacvalue"></input></dd>
 </dl>
-<ul>
-<li v-for="i in CandidateLists">
-{{ i }}<button v-on:click="candidate_click" v-bind:value="i.host">削除</button>
-</ul>
+-->
+<table class="table table-hover">
+<tr  v-for="i in CandidateLists">
+<td>{{ i.host }}</td><td>{{ i.ip }}</td><td>{{ i.mac }}</td><td>{{ i.typename }}</td><td><button class="btn btn-danger btn-sm" v-on:click="candidate_click" v-bind:value="i.host">削除</button></td>
+</tr>
+</table>
 </div>
 </section>
-<section id="add-ip-address">
+<section role="tabpanel" id="add-ip-address" class="tab-pane active show">
 固定IPアドレス情報を登録します。
+<!--
 <div id="app">
 <dl>
 <dt>ホスト検索:</dt><dd><input type=text v-on:keyup="keyup" v-bind:value="inputvalue"></input></dd>
@@ -87,16 +72,32 @@ li span {
 <li>無線:<span v-on:click="set_mac" v-bind:value="CandidateHost.wlan" id="wlan">{{ CandidateHost.wlan }}</span></li>
 </ul>
 </div>
+-->
 <div id="app2">
-<dl>
-<dt>ホスト名:</dt><dd><input type=text id="host" v-on:change="host_change" v-bind:value="host"></input></dd>
-<dt>mac:</dt><dd><input type=text id="mac" v-on:change="mac_change" v-bind:value="mac"></input></dd>
-</dl>
-<div  v-for="(d,i) in ranges">
-<input type=radio v-model="type" v-bind:value="d.typeid" >{{ d.name }}</input>
+<div class="form-group w-25">
+<label for="host">ホスト名</label>
+<input class="form-control" type=text id="host" v-on:change="host_change" v-bind:value="host"></input>
 </div>
-<button v-on:click="add_host">追加</button>
+<div class="form-group w-25">
+<label for id="mac" >mac</label>
+<input class="form-control" type=text id="mac" v-on:change="mac_change" v-bind:value="mac"></input>
+</div>
+<div class="form-check" v-for="(d,i) in ranges">
+<label class="form-check-label">
+<input class="form-check-input" type=radio v-model="type" v-bind:value="d.typeid" />
+{{ d.name }}
+</label>
+</div>
+<button class="btn btn-success" v-on:click="add_host">追加</button>
+<template v-if="message.Host">
+<table class="table" >
+<td>{{ message.Host.host }}</td><td>{{ message.Host.ip }}</td><td>{{ message.Host.mac }}</td><td>{{ message.Host.typename }}</td>
+</table>
+</template>
+<template v-else>
 <div>{{ message }}</div>
+</template>
+
 </div>
 </section>
 </body>
