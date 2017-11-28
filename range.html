@@ -4,28 +4,56 @@
 <meta charset='utf-8'>
 <script type="text/javascript" src="vue.js"></script>
 <script type="text/javascript" src="range.js"></script>
+<script type="text/javascript" src="bootstrap-native-v4.min.js"></script>
+<link rel="stylesheet" href="bootstrap.css" />
+<link rel="stylesheet" href="custom.css" />
+<style>
+section {
+    width: 90%;
+    margin: 2em auto;
+}
+</style>
 <title>固定IPアドレスレンジ設定</title>
 </head>
 <body>
-<input type="radio" name="range-menu" id="range-add" checked />
-<input type="radio" name="range-menu" id="range-delete" checked />
-<input type="radio" name="range-menu" id="range-show" checked />
-<section id="add-range">
+<header class="navbar navbar-expand navbar-dark flex-column flex-md-row">
+<div class="navbar-nav-scroll">
+<ul class="navbar-nav flex-row nav" role="tablist" id="mainTab">
+<li class="nav-item" ><a role="tab" data-toggle="tab" id="add-range-tab" class="nav-link active" href="#add-range">登録</a></li>
+<li class="nav-item" ><a role="tab" data-toggle="tab" id="delete-range-tab" class="nav-link " href="#delete-range">削除</a></li>
+<li class="nav-item" ><a role="tab" data-toggle="tab" id="show-range-tab" class="nav-link " href="#show-range">表示</a></li>
+</div>
+</header>
+
+<div class="tab-content" id="mainTabContent">
+<section role="tabpanel" id="add-range" class="tab-pane show active">
 <div id="add_view">
-Name: <input type="text" v-model="name " /><br />
-Start: <input type="text" v-bind:input="startValidator(start)" v-model="start " />
-End: <input type="text" v-bind:input="endValidator(end)" v-model="end " />
-<button v-on:click="add_range" >add</button>
+<div class="form-group w-25">
+<label for="host">名称</label>
+<input class="form-control" type=text  v-model="name" />
+</div>
+<div class="form-group w-25">
+<label for="host">開始アドレス</label>
+<input class="form-control" type=text v-bind:input="startValidator(start)" v-model="start" />
+</div>
+<div class="form-group w-25">
+<label for="host">終了アドレス</label>
+<input class="form-control" type=text v-bind:input="endValidator(start)" v-model="end" />
+</div>
+<button class="btn btn-success" v-on:click="add_range" >追加</button>
 </div>
 </section>
-<section id="delete-range">
+
+<section role="tabpanel" id="delete-range" class="tab-pane">
 <div id="delete_view">
 </div>
 </section>
-<section id="show-range">
+
+<section role="tabpanel" id="show-range" class="tab-pane">
 <div id="show_view">
 </div>
 </section>
+</div>
 </body>
 </html>
 
