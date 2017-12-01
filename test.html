@@ -57,22 +57,17 @@ margin: 2em auto;
 </section>
 <section role="tabpanel" id="add-ip-address" class="tab-pane active show">
 固定IPアドレス情報を登録します。
-<!--
 <div id="app">
-<dl>
-<dt>ホスト検索:</dt><dd><input type=text v-on:keyup="keyup" v-bind:value="inputvalue"></input></dd>
-</dl>
+<div class="form-group w-25">
+<label for="host">ホスト検索</label>
+<input class="form-control" type=text v-on:keyup="keyup" v-bind:value="inputvalue"></input>
+</div>
 <ul>
 <li v-for="i in CandidateLists">
 <span v-on:click="candidate_click" v-bind:value="i">{{ i }}</span>
 </li>
 </ul>
-<ul>
-<li>有線:<span v-on:click="set_mac" v-bind:value="CandidateHost.lan" id="lan">{{ CandidateHost.lan }}</span></li>
-<li>無線:<span v-on:click="set_mac" v-bind:value="CandidateHost.wlan" id="wlan">{{ CandidateHost.wlan }}</span></li>
-</ul>
 </div>
--->
 <div id="app2">
 <div class="form-group w-25">
 <label for="host">ホスト名</label>

@@ -94,8 +94,12 @@ class HostSelector {
         }).toLowerCase();
     }
     set host(x) {
+        x = this._str_normalize(x).match(/^[a-z0-9\-]+/i);
+        if(x){
+            x = x[0];
+        }
+
         console.log("host change", x);
-        x = this._str_normalize(x);
         this._host = x;
         this.hostChanged.fire();
     }
@@ -106,17 +110,15 @@ class HostSelector {
         this.typeChanged.fire();
     }
     set mac(x) {
-        console.log("host mac", x);
         x = this._str_normalize(x);
         var y = "";
         for (var i of x) {
-            console.log(i)
             if (i.match("[a-f0-9]")) {
                 y += i
             }
         }
-        y = y.replace(/(..)(?=.)/g, "$1:");
-
+        y = y.replace(/(..)(?=.)/g, "$1:").slice(0,17);
+        console.log("host mac", y);
         this._mac = y;
         this.macChanged.fire();
     }
@@ -162,14 +164,19 @@ class AssetSelector {
     // APIのresponseはデータがあれば  {'Hosts':['hosta','hostb',...]}
     // データがなければ{'msg':'error message'}
     SearchList(x) {
+        if(x.length<=1){
+            return
+        }
         fetch(EndPoint + "Assets/Hosts/search/" + x).then(r=>r.json()).then(j=>{
             console.log(j)
             var list = [];
+            var r = new RegExp(x,'i');;
             for (var i of j.Hosts) {
-                if (i.match(x)) {
+                if (i.match(r)) {
                     list.push(i);
                 }
             }
+            console.log(list);
             this.CandidateLists = list;
         }
         );
@@ -304,7 +311,7 @@ function keyup(event) {
         return String.fromCharCode(s.charCodeAt(0) - 65248);
     }).toLowerCase();
     if (value.length > 0) {
-        this.model.SearchList(value);
+        this.model.AssetSearchList(value);
     }
     console.log("keyup: ", value, value.length);
 }
@@ -317,7 +324,7 @@ function getAddress() {
 // 実際のデータを検索する
 function candidate_click(event) {
     console.log("candidate_click", event.target.attributes.value.value);
-    this.model.SearchHost(event.target.attributes.value.value);
+    this.model.AssetSearchHost(event.target.attributes.value.value);
 }
 
 function click(event) {
@@ -336,13 +343,26 @@ function AllHosts(event){
 }
 // Host情報をAPI経由で追加する
 function add_host(event) {
+    var error = false;
+    this.message = "";
     var json = {
-        'host': this.model.host,
+        'host': this.host,
         'typeid': this.type,
-        'mac': this.model.mac
+        'mac': this.mac
+    }
+    if(!json['host'].match(/^[0-9a-zA-Z\-]+$/)){
+        this.message += "ホスト名がおかしいです";
+        error = true;
     }
     if(json['mac'].length!=17){
-        this.message = "MAC Addressの長さがおかしいです";
+        this.message += "MAC Addressの長さがおかしいです\n";
+        error = true;
+    }
+    if(json['typeid']==""){
+        this.message += "タイプを選択してください\n";
+        error = true;
+    }
+    if(error){
         return
     }
     console.log("type: ", this.type);
@@ -403,6 +423,9 @@ window.addEventListener("load", function() {
             this.model = new DhcpSelector();
         },
         mounted: function(){
+            document.getElementById('list-ip-address-tab').addEventListener('shown.bs.tab',(e)=>{
+                this.model.AllHosts();
+            });
             console.log("app_show mounted");
             this.model.CandidateListsChanged.observe(e=>{
                 this.CandidateLists = this.model.CandidateLists;
@@ -433,6 +456,7 @@ window.addEventListener("load", function() {
             }
             );
             this.model.macChanged.observe(e=>{
+                console.log("mac change observe");
                 this.mac = this.model.mac;
             }
             );
@@ -469,15 +493,16 @@ window.addEventListener("load", function() {
         },
         mounted: function() {
             this.model.AssetCandidateListsChanged.observe(()=>{
-                this.AssetCandidateLists = this.model.AssetCandidateLists;
-                if (this.AssetCandidateLists.length == 1) {
-                    this.model.SearchHost(this.AssetCandidateLists[0]);
+                this.CandidateLists = this.model.AssetCandidateLists;
+                if (this.CandidateLists.length == 1) {
+                    this.model.AssetSearchHost(this.CandidateLists[0]);
                 }
             }
             );
-            this.model.CandidateHostChanged.observe(()=>{
-                this.CandidateHost = this.model.CandidateHost;
+            this.model.AssetCandidateHostChanged.observe(()=>{
+                this.CandidateHost = this.model.AssetCandidateHost;
                 this.model.host = this.CandidateHost.host;
+                this.model.mac = this.CandidateHost.mac;
             }
             );
         },
